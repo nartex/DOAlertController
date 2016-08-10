@@ -153,7 +153,7 @@ public class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCo
     public var overlayColor = UIColor(red:0, green:0, blue:0, alpha:0.5)
     
     // ContainerView
-    private var containerView = UIView()
+    public var containerView = UIView()
     private var containerViewBottomSpaceConstraint: NSLayoutConstraint!
     
     // AlertView
