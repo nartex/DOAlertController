@@ -157,7 +157,7 @@ public class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCo
     private var containerViewBottomSpaceConstraint: NSLayoutConstraint!
     
     // AlertView
-    private var alertView = UIView()
+    public var alertView = UIView()
     public var alertViewBgColor = UIColor(red:239/255, green:240/255, blue:242/255, alpha:1.0)
     private var alertViewWidth: CGFloat = 270.0
     private var alertViewHeightConstraint: NSLayoutConstraint!
