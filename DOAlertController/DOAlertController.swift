@@ -38,8 +38,8 @@ open class DOAlertAction : NSObject, NSCopying {
             }
         }
     }
-    
-    public required init(title: String, style: DOAlertActionStyle, handler: ((DOAlertAction?) -> Void)!) {
+
+    required public init(title: String, style: DOAlertActionStyle, handler: ((DOAlertAction?) -> Void)!) {
         self.title = title
         self.style = style
         self.handler = handler
@@ -78,7 +78,7 @@ open class DOAlertAnimation : NSObject, UIViewControllerAnimatedTransitioning {
             self.dismissAnimateTransition(transitionContext)
         }
     }
-    
+
     open func presentAnimateTransition(_ transitionContext: UIViewControllerContextTransitioning) {
         
         let alertController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as! DOAlertController
@@ -95,27 +95,27 @@ open class DOAlertAnimation : NSObject, UIViewControllerAnimatedTransitioning {
         containerView.addSubview(alertController.view)
         
         UIView.animate(withDuration: 0.25,
-            animations: {
-                alertController.overlayView.alpha = 1.0
-                if (alertController.isAlert()) {
-                    alertController.alertView.alpha = 1.0
-                    alertController.alertView.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
-                } else {
-                    let bounce = alertController.alertView.frame.height / 480 * 10.0 + 10.0
-                    alertController.alertView.transform = CGAffineTransform(translationX: 0, y: -bounce)
-                }
-            },
-            completion: { finished in
-                UIView.animate(withDuration: 0.2,
-                    animations: {
-                        alertController.alertView.transform = CGAffineTransform.identity
-                    },
-                    completion: { finished in
-                        if (finished) {
-                            transitionContext.completeTransition(true)
-                        }
-                    })
-            })
+                                   animations: {
+                                    alertController.overlayView.alpha = 1.0
+                                    if (alertController.isAlert()) {
+                                        alertController.alertView.alpha = 1.0
+                                        alertController.alertView.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
+                                    } else {
+                                        let bounce = alertController.alertView.frame.height / 480 * 10.0 + 10.0
+                                        alertController.alertView.transform = CGAffineTransform(translationX: 0, y: -bounce)
+                                    }
+        },
+                                   completion: { finished in
+                                    UIView.animate(withDuration: 0.2,
+                                                               animations: {
+                                                                alertController.alertView.transform = CGAffineTransform.identity
+                                    },
+                                                               completion: { finished in
+                                                                if (finished) {
+                                                                    transitionContext.completeTransition(true)
+                                                                }
+                                    })
+        })
     }
     
     open func dismissAnimateTransition(_ transitionContext: UIViewControllerContextTransitioning) {
@@ -123,23 +123,23 @@ open class DOAlertAnimation : NSObject, UIViewControllerAnimatedTransitioning {
         let alertController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from) as! DOAlertController
         
         UIView.animate(withDuration: self.transitionDuration(using: transitionContext),
-            animations: {
-                alertController.overlayView.alpha = 0.0
-                if (alertController.isAlert()) {
-                    alertController.alertView.alpha = 0.0
-                    alertController.alertView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-                } else {
-                    alertController.containerView.transform = CGAffineTransform(translationX: 0, y: alertController.alertView.frame.height)
-                }
-            },
-            completion: { finished in
-                transitionContext.completeTransition(true)
-            })
+                                   animations: {
+                                    alertController.overlayView.alpha = 0.0
+                                    if (alertController.isAlert()) {
+                                        alertController.alertView.alpha = 0.0
+                                        alertController.alertView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+                                    } else {
+                                        alertController.containerView.transform = CGAffineTransform(translationX: 0, y: alertController.alertView.frame.height)
+                                    }
+        },
+                                   completion: { finished in
+                                    transitionContext.completeTransition(true)
+        })
     }
 }
 
 // MARK: DOAlertController Class
-
+@objc(DOAlertController)
 open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate {
     
     // Message
@@ -153,14 +153,14 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
     open var overlayColor = UIColor(red:0, green:0, blue:0, alpha:0.5)
     
     // ContainerView
-    open var containerView = UIView()
-    fileprivate var containerViewBottomSpaceConstraint: NSLayoutConstraint!
+    fileprivate(set) open var containerView = UIView()
+    fileprivate var containerViewBottomSpaceConstraint: NSLayoutConstraint?
     
     // AlertView
     open var alertView = UIView()
     open var alertViewBgColor = UIColor(red:239/255, green:240/255, blue:242/255, alpha:1.0)
     fileprivate var alertViewWidth: CGFloat = 270.0
-    fileprivate var alertViewHeightConstraint: NSLayoutConstraint!
+    fileprivate var alertViewHeightConstraint: NSLayoutConstraint?
     fileprivate var alertViewPadding: CGFloat = 15.0
     fileprivate var innerContentWidth: CGFloat = 240.0
     fileprivate let actionSheetBounceHeight: CGFloat = 20.0
@@ -174,20 +174,20 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
     
     // TextContainer
     fileprivate var textContainer = UIView()
-    fileprivate var textContainerHeightConstraint: NSLayoutConstraint!
+    fileprivate var textContainerHeightConstraint: NSLayoutConstraint?
     
     // TitleLabel
-    fileprivate var titleLabel = UILabel()
+    open var titleLabel = UILabel()
     open var titleFont = UIFont(name: "HelveticaNeue-Bold", size: 18)
     open var titleTextColor = UIColor(red:77/255, green:77/255, blue:77/255, alpha:1.0)
     
     // MessageView
-    fileprivate var messageView = UILabel()
+    open var messageView = UILabel()
     open var messageFont = UIFont(name: "HelveticaNeue", size: 15)
     open var messageTextColor = UIColor(red:77/255, green:77/255, blue:77/255, alpha:1.0)
     
     // TextFieldContainerView
-    fileprivate var textFieldContainerView = UIView()
+    open var textFieldContainerView = UIView()
     open var textFieldBorderColor = UIColor(red: 203.0/255, green: 203.0/255, blue: 203.0/255, alpha: 1.0)
     
     // TextFields
@@ -198,7 +198,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
     
     // ButtonAreaScrollView
     fileprivate var buttonAreaScrollView = UIScrollView()
-    fileprivate var buttonAreaScrollViewHeightConstraint: NSLayoutConstraint!
+    fileprivate var buttonAreaScrollViewHeightConstraint: NSLayoutConstraint?
     fileprivate var buttonAreaHeight: CGFloat = 0.0
     
     // ButtonAreaView
@@ -206,19 +206,19 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
     
     // ButtonContainer
     fileprivate var buttonContainer = UIView()
-    fileprivate var buttonContainerHeightConstraint: NSLayoutConstraint!
+    fileprivate var buttonContainerHeightConstraint: NSLayoutConstraint?
     fileprivate let buttonHeight: CGFloat = 44.0
     fileprivate var buttonMargin: CGFloat = 10.0
     
     // Actions
-    fileprivate(set) var actions: [AnyObject] = []
+    open fileprivate(set) var actions: [AnyObject] = []
     
     // Buttons
-    fileprivate var buttons = [UIButton]()
-    open var buttonFont: [DOAlertActionStyle : UIFont?] = [
-        .default : UIFont(name: "HelveticaNeue-Bold", size: 16),
-        .cancel  : UIFont(name: "HelveticaNeue-Bold", size: 16),
-        .destructive  : UIFont(name: "HelveticaNeue-Bold", size: 16)
+    open var buttons = [UIButton]()
+    open var buttonFont: [DOAlertActionStyle : UIFont] = [
+        .default : UIFont(name: "HelveticaNeue-Bold", size: 16) ?? UIFont.systemFont(ofSize: 16),
+        .cancel  : UIFont(name: "HelveticaNeue-Bold", size: 16) ?? UIFont.systemFont(ofSize: 16),
+        .destructive  : UIFont(name: "HelveticaNeue-Bold", size: 16) ?? UIFont.systemFont(ofSize: 16)
     ]
     open var buttonTextColor: [DOAlertActionStyle : UIColor] = [
         .default : UIColor.white,
@@ -260,11 +260,51 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         
         // Delegate
         self.transitioningDelegate = self
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    override public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName:nibNameOrNil, bundle:nibBundleOrNil)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func currentOrientation() -> UIInterfaceOrientation {
+        return UIScreen.main.bounds.size.width < UIScreen.main.bounds.size.height ? .portrait : .landscapeLeft
+    }
+    
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if (!isAlert() && cancelButtonTag != 0) {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(DOAlertController.handleContainerViewTapGesture(_:)))
+            containerView.addGestureRecognizer(tapGesture)
+        }
+    }
+    
+    open override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        layoutView(self.presentingViewController)
+    }
+    
+    
+    open func layoutView(_ presenting: UIViewController?) {
+        if (layoutFlg) { return }
+        layoutFlg = true
         
         // Screen Size
-        var screenSize = UIScreen.main.bounds.size
+        var screenSize = presenting != nil ? presenting!.view.bounds.size : UIScreen.main.bounds.size
         if ((UIDevice.current.systemVersion as NSString).floatValue < 8.0) {
-            if (UIInterfaceOrientationIsLandscape(UIApplication.shared.statusBarOrientation)) {
+            if (UIInterfaceOrientationIsLandscape(currentOrientation())) {
                 screenSize = CGSize(width: screenSize.height, height: screenSize.width)
             }
         }
@@ -330,7 +370,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         let containerViewRightSpaceConstraint = NSLayoutConstraint(item: containerView, attribute: .right, relatedBy: .equal, toItem: self.view, attribute: .right, multiplier: 1.0, constant: 0.0)
         let containerViewLeftSpaceConstraint = NSLayoutConstraint(item: containerView, attribute: .left, relatedBy: .equal, toItem: self.view, attribute: .left, multiplier: 1.0, constant: 0.0)
         containerViewBottomSpaceConstraint = NSLayoutConstraint(item: containerView, attribute: .bottom, relatedBy: .equal, toItem: self.view, attribute: .bottom, multiplier: 1.0, constant: 0.0)
-        self.view.addConstraints([overlayViewTopSpaceConstraint, overlayViewRightSpaceConstraint, overlayViewLeftSpaceConstraint, overlayViewBottomSpaceConstraint, containerViewTopSpaceConstraint, containerViewRightSpaceConstraint, containerViewLeftSpaceConstraint, containerViewBottomSpaceConstraint])
+        self.view.addConstraints([overlayViewTopSpaceConstraint, overlayViewRightSpaceConstraint, overlayViewLeftSpaceConstraint, overlayViewBottomSpaceConstraint, containerViewTopSpaceConstraint, containerViewRightSpaceConstraint, containerViewLeftSpaceConstraint, containerViewBottomSpaceConstraint!])
         
         if (isAlert()) {
             // ContainerView
@@ -341,7 +381,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
             // AlertView
             let alertViewWidthConstraint = NSLayoutConstraint(item: alertView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1.0, constant: alertViewWidth)
             alertViewHeightConstraint = NSLayoutConstraint(item: alertView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: 1000.0)
-            alertView.addConstraints([alertViewWidthConstraint, alertViewHeightConstraint])
+            alertView.addConstraints([alertViewWidthConstraint, alertViewHeightConstraint!])
             
         } else {
             // ContainerView
@@ -352,7 +392,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
             
             // AlertView
             alertViewHeightConstraint = NSLayoutConstraint(item: alertView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: 1000.0)
-            alertView.addConstraint(alertViewHeightConstraint)
+            alertView.addConstraint(alertViewHeightConstraint!)
         }
         
         // AlertView
@@ -382,7 +422,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         // TextContainer
         let textContainerWidthConstraint = NSLayoutConstraint(item: textContainer, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1.0, constant: innerContentWidth)
         textContainerHeightConstraint = NSLayoutConstraint(item: textContainer, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: 0.0)
-        textContainer.addConstraints([textContainerWidthConstraint, textContainerHeightConstraint])
+        textContainer.addConstraints([textContainerWidthConstraint, textContainerHeightConstraint!])
         
         // ButtonAreaScrollView
         buttonAreaScrollViewHeightConstraint = NSLayoutConstraint(item: buttonAreaScrollView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: 0.0)
@@ -391,7 +431,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         let buttonAreaViewLeftSpaceConstraint = NSLayoutConstraint(item: buttonAreaView, attribute: .left, relatedBy: .equal, toItem: buttonAreaScrollView, attribute: .left, multiplier: 1.0, constant: 0.0)
         let buttonAreaViewBottomSpaceConstraint = NSLayoutConstraint(item: buttonAreaView, attribute: .bottom, relatedBy: .equal, toItem: buttonAreaScrollView, attribute: .bottom, multiplier: 1.0, constant: 0.0)
         let buttonAreaViewWidthConstraint = NSLayoutConstraint(item: buttonAreaView, attribute: .width, relatedBy: .equal, toItem: buttonAreaScrollView, attribute: .width, multiplier: 1.0, constant: 0.0)
-        buttonAreaScrollView.addConstraints([buttonAreaScrollViewHeightConstraint, buttonAreaViewTopSpaceConstraint, buttonAreaViewRightSpaceConstraint, buttonAreaViewLeftSpaceConstraint, buttonAreaViewBottomSpaceConstraint, buttonAreaViewWidthConstraint])
+        buttonAreaScrollView.addConstraints([buttonAreaScrollViewHeightConstraint!, buttonAreaViewTopSpaceConstraint, buttonAreaViewRightSpaceConstraint, buttonAreaViewLeftSpaceConstraint, buttonAreaViewBottomSpaceConstraint, buttonAreaViewWidthConstraint])
         
         // ButtonArea
         let buttonAreaViewHeightConstraint = NSLayoutConstraint(item: buttonAreaView, attribute: .height, relatedBy: .equal, toItem: buttonContainer, attribute: .height, multiplier: 1.0, constant: 0.0)
@@ -402,34 +442,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         // ButtonContainer
         let buttonContainerWidthConstraint = NSLayoutConstraint(item: buttonContainer, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1.0, constant: innerContentWidth)
         buttonContainerHeightConstraint = NSLayoutConstraint(item: buttonContainer, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: 0.0)
-        buttonContainer.addConstraints([buttonContainerWidthConstraint, buttonContainerHeightConstraint])
-    }
-    
-    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName:nibNameOrNil, bundle:nibBundleOrNil)
-    }
-    
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    open override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        layoutView()
-    }
-    
-    open override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if (!isAlert() && cancelButtonTag != 0) {
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(DOAlertController.handleContainerViewTapGesture(_:)))
-            containerView.addGestureRecognizer(tapGesture)
-        }
-    }
-    
-    open func layoutView() {
-        if (layoutFlg) { return }
-        layoutFlg = true
+        buttonContainer.addConstraints([buttonContainerWidthConstraint, buttonContainerHeightConstraint!])
         
         //------------------------------
         // Layout & Color Settings
@@ -489,7 +502,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
             var textFieldContainerHeight: CGFloat = 0.0
             
             // TextFields
-            for (i, obj) in (textFields!).enumerated() {
+            for (_, obj) in (textFields!).enumerated() {
                 let textField = obj as! UITextField
                 textField.frame = CGRect(x: 0.0, y: textFieldContainerHeight, width: innerContentWidth, height: textField.frame.height)
                 textFieldContainerHeight += textField.frame.height + 0.5
@@ -507,7 +520,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         // TextAreaScrollView
         textAreaHeight = textAreaPositionY
         textAreaScrollView.contentSize = CGSize(width: alertViewWidth, height: textAreaHeight)
-        textContainerHeightConstraint.constant = textAreaHeight
+        textContainerHeightConstraint?.constant = textAreaHeight
         
         //------------------------------
         // ButtonArea Layout
@@ -520,7 +533,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
             var buttonPositionX: CGFloat = 0.0
             for button in buttons {
                 let action = actions[button.tag - 1] as! DOAlertAction
-                button.titleLabel?.font = buttonFont[action.style]!
+                button.titleLabel?.font = buttonFont[action.style]
                 button.setTitleColor(buttonTextColor[action.style], for: UIControlState())
                 button.setBackgroundImage(createImageFromUIColor(buttonBgColor[action.style]!), for: UIControlState())
                 button.setBackgroundImage(createImageFromUIColor(buttonBgColorHighlighted[action.style]!), for: .highlighted)
@@ -533,7 +546,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
             for button in buttons {
                 let action = actions[button.tag - 1] as! DOAlertAction
                 if (action.style != DOAlertActionStyle.cancel) {
-                    button.titleLabel?.font = buttonFont[action.style]!
+                    button.titleLabel?.font = buttonFont[action.style]
                     button.setTitleColor(buttonTextColor[action.style], for: UIControlState())
                     button.setBackgroundImage(createImageFromUIColor(buttonBgColor[action.style]!), for: UIControlState())
                     button.setBackgroundImage(createImageFromUIColor(buttonBgColorHighlighted[action.style]!), for: .highlighted)
@@ -552,7 +565,7 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
                 }
                 let button = buttonAreaScrollView.viewWithTag(cancelButtonTag) as! UIButton
                 let action = actions[cancelButtonTag - 1] as! DOAlertAction
-                button.titleLabel?.font = buttonFont[action.style]!
+                button.titleLabel?.font = buttonFont[action.style]
                 button.setTitleColor(buttonTextColor[action.style], for: UIControlState())
                 button.setBackgroundImage(createImageFromUIColor(buttonBgColor[action.style]!), for: UIControlState())
                 button.setBackgroundImage(createImageFromUIColor(buttonBgColorHighlighted[action.style]!), for: .highlighted)
@@ -571,29 +584,28 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         // ButtonAreaScrollView Height
         buttonAreaHeight = buttonAreaPositionY
         buttonAreaScrollView.contentSize = CGSize(width: alertViewWidth, height: buttonAreaHeight)
-        buttonContainerHeightConstraint.constant = buttonAreaHeight
+        buttonContainerHeightConstraint?.constant = buttonAreaHeight
         
         //------------------------------
         // AlertView Layout
         //------------------------------
         // AlertView Height
         reloadAlertViewHeight()
-        alertView.frame.size = CGSize(width: alertViewWidth, height: alertViewHeightConstraint.constant)
+        alertView.frame.size = CGSize(width: alertViewWidth, height: alertViewHeightConstraint?.constant ?? 150)
     }
     
     // Reload AlertView Height
     open func reloadAlertViewHeight() {
-        
-        var screenSize = UIScreen.main.bounds.size
+        var screenSize = self.presentingViewController != nil ? self.presentingViewController!.view.bounds.size : UIScreen.main.bounds.size
         if ((UIDevice.current.systemVersion as NSString).floatValue < 8.0) {
-            if (UIInterfaceOrientationIsLandscape(UIApplication.shared.statusBarOrientation)) {
+            if (UIInterfaceOrientationIsLandscape(currentOrientation())) {
                 screenSize = CGSize(width: screenSize.height, height: screenSize.width)
             }
         }
         let maxHeight = screenSize.height - keyboardHeight
         
         // for avoiding constraint error
-        buttonAreaScrollViewHeightConstraint.constant = 0.0
+        buttonAreaScrollViewHeightConstraint?.constant = 0.0
         
         // AlertView Height Constraint
         var alertViewHeight = textAreaHeight + buttonAreaHeight
@@ -603,18 +615,18 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         if (!isAlert()) {
             alertViewHeight += actionSheetBounceHeight
         }
-        alertViewHeightConstraint.constant = alertViewHeight
+        alertViewHeightConstraint?.constant = alertViewHeight
         
         // ButtonAreaScrollView Height Constraint
         var buttonAreaScrollViewHeight = buttonAreaHeight
         if (buttonAreaScrollViewHeight > maxHeight) {
             buttonAreaScrollViewHeight = maxHeight
         }
-        buttonAreaScrollViewHeightConstraint.constant = buttonAreaScrollViewHeight
+        buttonAreaScrollViewHeightConstraint?.constant = buttonAreaScrollViewHeight
     }
     
     // Button Tapped Action
-    open func buttonTapped(_ sender: UIButton) {
+    func buttonTapped(_ sender: UIButton) {
         sender.isSelected = true
         let action = actions[sender.tag - 1] as! DOAlertAction
         if (action.handler != nil) {
@@ -646,34 +658,35 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
     }
     
     // MARK : Handle NSNotification Method
-    
+
     @objc open func handleAlertActionEnabledDidChangeNotification(_ notification: Notification) {
         for i in 0..<buttons.count {
             buttons[i].isEnabled = actions[i].enabled
         }
     }
-    
+
     open func handleKeyboardWillShowNotification(_ notification: Notification) {
-        if let userInfo = (notification as NSNotification).userInfo as? [String: NSValue] {
-            var keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey]!.cgRectValue.size
+        if let userInfo = notification.userInfo as? [String: NSValue],
+            let keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.cgRectValue.size {
+            var _keyboardSize = keyboardSize
             if ((UIDevice.current.systemVersion as NSString).floatValue < 8.0) {
-                if (UIInterfaceOrientationIsLandscape(UIApplication.shared.statusBarOrientation)) {
-                    keyboardSize = CGSize(width: keyboardSize.height, height: keyboardSize.width)
+                if (UIInterfaceOrientationIsLandscape(currentOrientation())) {
+                    _keyboardSize = CGSize(width: _keyboardSize.height, height: _keyboardSize.width)
                 }
             }
-            keyboardHeight = keyboardSize.height
+            keyboardHeight = _keyboardSize.height
             reloadAlertViewHeight()
-            containerViewBottomSpaceConstraint.constant = -keyboardHeight
+            containerViewBottomSpaceConstraint?.constant = -keyboardHeight
             UIView.animate(withDuration: 0.25, animations: {
                 self.view.layoutIfNeeded()
             })
         }
     }
-    
+
     open func handleKeyboardWillHideNotification(_ notification: Notification) {
         keyboardHeight = 0.0
         reloadAlertViewHeight()
-        containerViewBottomSpaceConstraint.constant = keyboardHeight
+        containerViewBottomSpaceConstraint?.constant = keyboardHeight
         UIView.animate(withDuration: 0.25, animations: {
             self.view.layoutIfNeeded()
         })
@@ -687,8 +700,8 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         if (action.style == DOAlertActionStyle.cancel) {
             for ac in actions as! [DOAlertAction] {
                 if (ac.style == DOAlertActionStyle.cancel) {
-                    
-                    NSException.raise(NSExceptionName(rawValue: "NSInternalInconsistencyException"), format:"DOAlertController can only have one action with a style of DOAlertActionStyleCancel", arguments:getVaList(["nil"]))
+                    let error: NSError? = nil
+                    NSException.raise(NSExceptionName(rawValue: "NSInternalInconsistencyException"), format:"DOAlertController can only have one action with a style of DOAlertActionStyleCancel", arguments:getVaList([error ?? "nil"]))
                     return
                 }
             }
@@ -713,7 +726,8 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
         
         // You can add a text field only if the preferredStyle property is set to DOAlertControllerStyle.Alert.
         if (!isAlert()) {
-            NSException.raise(NSExceptionName(rawValue: "NSInternalInconsistencyException"), format: "Text fields can only be added to an alert controller of style DOAlertControllerStyleAlert", arguments:getVaList(["nil"]))
+            let error: NSError? = nil
+            NSException.raise(NSExceptionName(rawValue: "NSInternalInconsistencyException"), format: "Text fields can only be added to an alert controller of style DOAlertControllerStyleAlert", arguments:getVaList([error ?? "nil"]))
             return
         }
         if (textFields == nil) {
@@ -747,9 +761,8 @@ open class DOAlertController : UIViewController, UITextFieldDelegate, UIViewCont
     }
     
     // MARK: UIViewControllerTransitioningDelegate Methods
-    
     open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        layoutView()
+        layoutView(presenting)
         return DOAlertAnimation(isPresenting: true)
     }
     
